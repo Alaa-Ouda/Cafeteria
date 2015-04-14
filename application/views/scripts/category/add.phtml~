@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>Add Cat</title>
+    </head>
+    <body>
+        <h2>ADD CATEGORY PAGE</h2>
+        <?php
+          if(isset($this->data))
+            {
+                var_dump($this->data);
+            }
+            else
+            {
+                echo $this->form;
+
+            }
+        ?>
+    </body>
+</html>

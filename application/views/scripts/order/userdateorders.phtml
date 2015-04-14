@@ -1,0 +1,73 @@
+<?php 
+
+$first_table = array();
+
+
+$id = 0;
+$name = '';
+$status = '';
+$price = 0;
+$total = 0;
+$final_total = 0;
+$flag = false;
+echo "<table id='productlist' class='names'><tr><th>Order Date</th><th>Status</th><th>Amount</th><th>Action</th></tr>";
+foreach($this->orders as $key => $order){
+	if($name == ''){
+		$id = $order['order_id'];
+		$name = $order['order_date'];
+		if($order['order_status'] == 0)
+			$status = 'Processing';
+		else if($order['order_status'] == 1)
+			$status = 'Out for delivery';
+		else
+			$status = 'Done';
+		$price = $order['prod_order_price'];
+	}else
+		if($name == $order['order_date']){
+			$price += $order['prod_order_price'];
+		}
+		else{
+			
+			$final_total += $price; 
+			echo "<tr>";
+			echo "<td><label class='expandprods' id='".$id."'>+</label> ".$name."</td>";
+			echo "<td>".$status."</td>";
+			echo "<td>".$price."</td><td>";
+			if($status == 'Processing')
+				echo "<a href='".$this->baseUrl()."/order/delete/id/".$id."'>Cancel</a>";
+			echo "</td></tr>";
+			$id = $order['order_id'];
+			$name = $order['order_date'];
+		if($order['order_status'] == 0)
+			$status = 'Processing';
+		else if($order['order_status'] == 1)
+			$status = 'Out for delivery';
+		else
+			$status = 'Done';
+			$price = $order['prod_order_price'];
+		}
+}
+$final_total += $price; 
+echo "<tr>";
+echo "<td><label class='expandprods' id='".$id."'>+</label> ".$name."</td>";
+echo "<td>".$status."</td>";
+echo "<td>".$price."</td><td>";
+if($status == 'Processing')
+	echo "<a href='".$this->baseUrl()."/order/delete/id/".$id."'>Cancel</a>";
+echo "</td></tr>";
+echo "</table>";
+
+
+
+echo "<ul id='productslist' class='prods'>";
+foreach($this->orders as $order){
+	echo "<li class='orderdate' id='".$order['order_id']."'>";
+	echo $order['pro_name']."<br/>";
+	echo "<img src='".$this->baseUrl($order['pro_image'])."'/><br/>";
+	echo $order['pro_price']." L.E. ";
+	echo "<br/>Ordered quantity: ".$order['pro_amount']." ";
+	echo "</li>";
+}
+echo "</ul>";
+
+echo "<label id='ordertotal'>Total:   ".$final_total." L.E.</label>";

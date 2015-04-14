@@ -1,0 +1,51 @@
+<?php
+
+class Application_Form_Edit extends Zend_Form
+{
+
+    public function init()
+    {
+        /* Form Elements & Other Definitions Here ... */
+        /* Form Elements & Other Definitions Here ... */
+        $this->setMethod("post");
+        $this->setEnctype(Zend_Form::ENCTYPE_MULTIPART);
+        $pro_name = new Zend_Form_Element("pro_name");
+        $pro_name->setLabel("Product name : ");
+        $pro_name->setAttrib("id", "pro_name");
+        $pro_name->setRequired();
+        $pro_name->addFilter(new Zend_Filter_StringTrim());
+        
+        $pro_price = new Zend_Form_Element("pro_price");
+        $pro_price->setLabel("Product price : ");
+        $pro_price->setAttrib("id","pro_price");
+        $pro_price->setRequired();
+        $pro_price->addFilter(new Zend_Filter_StringTrim());
+        $pro_price->addFilter(new Zend_Filter_Digits());
+        
+        $pro_status = new Zend_Form_Element_Select("pro_status");
+        $pro_status->setLabel("Product status : ");
+        $pro_status->addMultiOption(0,"not available");
+        $pro_status->addMultiOption(1,"available");
+        
+        $pro_image = new Zend_Form_Element_File("pro_image");
+        $pro_image->setLabel("Product image : ");
+       // $pro_image->setMaxFileSize(500000);
+        //$pro_image->setValueDisabled(TRUE);
+        //$pro_image->addValidator(new Zend_Validate_File_FilesSize(array('min'=>100 ,'max'=>100000)));
+        $pro_image->setRequired();
+        
+        $pro_image->setDestination('imgs/products/');
+        //$pro_image->addFilter('extension',FALSE,array('jpeg','jpg','png'));
+       $pro_image->addValidator(new Zend_Validate_File_IsImage());
+        
+        $cat = new Zend_Form_Element_Select("cat_id");
+        $cat->setRegisterInArrayValidator(FALSE); 
+        
+        $submit = new Zend_Form_Element_Submit("edit");
+        $submit->setAttrib("value","edit product");
+        $this->addElements(array($pro_name,$pro_price,$pro_status,$pro_image,$cat,$submit));
+    }
+
+
+}
+

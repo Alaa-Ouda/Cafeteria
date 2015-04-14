@@ -1,0 +1,68 @@
+<?php
+$first_table = array();
+
+foreach($this->orders as $order){
+	
+
+	$first_table[$order['order_id']]['user_name'] = $order['user_name'];
+	$first_table[$order['order_id']]['order_date'] = $order['order_date'];
+	if(isset($first_table[$order['order_id']]['total_price']))
+	$first_table[$order['order_id']]['total_price'] += $order['prod_order_price'];
+	else
+	$first_table[$order['order_id']]['total_price'] = intval($order['prod_order_price']);
+	
+	
+}
+
+asort($first_table);
+
+$name = '';
+$price = 0;
+$total = 0;
+$flag = false;
+echo "<div id='checkscontent'><table id='productlist' class='names'><tr><th>Name</th><th>Total Amount</th></tr>";
+foreach($first_table as $order){
+	
+	if($name == ''){
+		$name = $order['user_name'];
+		$price = $order['total_price'];
+	}else
+		if($name == $order['user_name']){
+			$price += $order['total_price'];
+		}
+		else{
+			
+			echo "<tr>";
+			echo "<td><label class='expand' id='".$name."'>+</label> ".$name."</td>";
+			echo "<td>".$price."</td>";
+			echo "</tr>";
+			$name = $order['user_name'];
+			$price = $order['total_price'];
+		}
+}
+echo "<tr>";
+echo "<td><label class='expand' id='".$name."'>+</label> ".$name."</td>";
+echo "<td>".$price."</td>";
+echo "</tr>";
+echo "</table>";
+
+echo "<table id='productlist' class='orders'><tr><th>Order Date</th><th>Amount</th></tr>";
+foreach($first_table as $key => $order){
+	echo "<tr class='username' id='".$order['user_name']."'>";
+	echo "<td><label class='expandprods' id='".$key."'>+</label> ".$order['order_date']."</td>";
+	echo "<td>".$order['total_price']."</td>";
+	echo "</tr>";
+}
+echo "</table>";
+
+
+echo "<ul id='productslist' class='prods'>";
+foreach($this->orders as $order){
+	echo "<li class='orderdate' id='".$order['order_id']."'>";
+	echo $order['pro_name']."<br/>";
+	echo "<img src='".$this->baseUrl($order['pro_image'])."'/><br/>";
+	echo $order['pro_price']." L.E. ";
+	echo "<br/>Ordered quantity: ".$order['pro_amount']." ";
+	echo "</li>";
+}
+echo "</ul></div>";

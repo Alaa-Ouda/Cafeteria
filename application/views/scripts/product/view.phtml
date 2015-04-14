@@ -1,0 +1,46 @@
+<?php
+if(isset($this->productInfo)){
+    $product = $this->productInfo;
+    $base = $this->baseUrl();
+    ?>
+        <table class="form">  
+    <?php
+        for($i= 0 ; $i < count($product) ; $i++){
+            ?>
+            <tr>
+                <td colspan="2"><h3><?php echo $product[$i]['pro_name'];?></h3></td>
+            </tr>
+            <tr>
+                <td colspan="2"><img src="<?php echo $base.'/'.$product[$i]['pro_image'];?>" width="200" height="200" /></td>
+            </tr>
+            <tr>
+                <td>Price:</td><td><?php echo $product[$i]['pro_price'];?> L.E</td>
+            </tr> 
+            <tr>
+                <td>Category:</td><td><?php echo $product[$i]['cat_name'];?></td>
+            </tr> 
+            <tr>
+                <td>Status:</td><td>
+                <?php 
+                if($product[$i]['pro_status'] == '0'){
+                    echo 'not available';
+                    
+                }  else {
+                   echo 'available'; 
+                }
+                
+                ?></td>
+            </tr>
+            
+            <?php
+            
+        }
+    
+    
+    ?>
+      </table>   
+    <?php
+}
+
+
+?>

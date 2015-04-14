@@ -1,0 +1,82 @@
+<?php $latest_order = 0;
+$index = 0;
+$total = 0;
+
+?>
+<h3>Latest Orders</h3>
+<table id='productlist'>
+<?php for ($i = 0; $i < count($this->orders); $i++) { 
+            $latest_order = $this->orders[$index]['order_id'];
+            if($index == $i){
+?> 
+    <tr> 
+    <th>Order Date</th>
+    <th>Name</th>
+    <th>Room no</th>
+    <th>Room ext</th>
+    <th>Action</th>
+  
+    </tr>
+    <?php
+    ?>
+    <tr id="ordertitle">
+    <?php
+    echo "<td>".$this->orders[$i]['order_date']."</td>";
+    echo "<td>".$this->orders[$i]['user_name']."</td>";
+    echo "<td>".$this->orders[$i]['room_no']."</td>";
+    echo "<td>".array_search($this->orders[$i]['room_no'],$this->roomexts)."</td>";
+    echo "<td><a href='".$this->baseUrl()."/order/deliverorder/id/".$this->orders[$i]['order_id']."'>Deliver</a></td></tr>";
+    echo "<tr><td colspan='5'><ul id='productslist'><li>".$this->orders[$i]['pro_name']."<br/>";
+    echo "<img width='50' height='50' src='".$this->baseUrl($this->orders[$i]['pro_image'])."' /><br/>";
+    echo $this->orders[$i]['pro_price']." L.E.<br/>";
+    echo "Ordered quantity: ".$this->orders[$i]['pro_amount']."</li>";
+   
+    $total = $this->orders[$i]['prod_order_price'];
+
+   
+     }else if($this->orders[$index]['order_id'] == $this->orders[$i]['order_id']){
+        echo "<li>".$this->orders[$i]['pro_name']."<br/>";
+    echo "<img width='50' height='50' src='".$this->baseUrl($this->orders[$i]['pro_image'])."' /><br/>";
+    echo $this->orders[$i]['pro_price']." L.E.<br/>";
+    echo "Ordered quantity: ".$this->orders[$i]['pro_amount']."</li>";
+   
+    $total += $this->orders[$i]['prod_order_price'];
+    }else{
+        echo "<tr><td colspan='5'><label id='ordertitle'>Total: ".$total." L.E.</label></td></tr>";
+?>
+</ul></td></tr>
+<tr> 
+    <th>Order Date</th>
+    <th>Name</th>
+    <th>Room no</th>
+    <th>Room ext</th>
+    <th>Action</th>
+   
+    </tr>
+    <?php
+    ?>
+    <tr id="ordertitle">
+    <?php
+    echo "<td>".$this->orders[$i]['order_date']."</td>";
+    echo "<td>".$this->orders[$i]['user_name']."</td>";
+    echo "<td>".$this->orders[$i]['room_no']."</td>";
+    echo "<td>".array_search($this->orders[$i]['room_no'],$this->roomexts)."</td>";
+    echo "<td><a href='".$this->baseUrl()."/order/deliverorder/id/".$this->orders[$i]['order_id']."'>Deliver</a></td></tr>";
+    echo "<tr><td colspan='5'><ul id='productslist'><li>".$this->orders[$i]['pro_name']."<br/>";
+    echo "<img width='50' height='50' src='".$this->baseUrl($this->orders[$i]['pro_image'])."' /><br/>";
+    echo $this->orders[$i]['pro_price']." L.E.<br/>";
+    echo "Ordered quantity: ".$this->orders[$i]['pro_amount']."</li>";
+  
+
+    $total = $this->orders[$i]['prod_order_price'];
+    ?>
+
+    <?php       
+$index = $i;
+    
+}
+}
+echo "<tr><td colspan='5'><label id='ordertitle'>Total: ".$total." L.E.</label></td></tr>";
+?>
+</ul></td></tr>
+        </table>

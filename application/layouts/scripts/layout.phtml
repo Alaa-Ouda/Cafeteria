@@ -1,0 +1,155 @@
+<?php
+$url       = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+		$url_array = explode('/', $url);
+if (count($url_array) == 2 && $url_array[0] == 'order' && ($url_array[1] == 'userchecks' || $url_array[1] == 'userschecks' || $url_array[1] == 'datechecks' || $url_array[1] == 'userdatechecks' || $url_array[1] == 'userdateorders')) {
+			
+			echo $this->layout()->content; 
+			exit();
+		}
+?>
+<?php echo $this->doctype() ?>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Cafeteria</title>
+	<?php echo $this->headLink()?>
+	<?php echo $this->headScript()?>
+</head>
+<body>
+	<!-- wrapper -->
+	<div id="wrapper">
+		<!-- header -->
+		<div class="header">
+			<!-- shell -->
+			<div class="shell">
+				<h1 id="logo"><a href="#">cafe</a></h1>
+				<div class="header-right">
+				</div>
+				<div class="cl">&nbsp;</div>
+				<!-- end of header -->
+				<!-- navigation -->
+				<nav id="navigation">
+				<?php 
+					$authorization = Zend_Auth::getInstance();
+					if ($authorization->hasIdentity()) {
+						
+						$authStorage = $authorization->getStorage();
+						$user_type = $authStorage->read()->user_type;
+						
+						if($user_type == 0){
+				?>
+					<ul>
+						<li><a href="/order">Home</a></li>
+						<li><a href="/order/getorder">My Orders</a></li>
+						<li><a href="/index/logout/">Log Out</a></li>
+					</ul>
+				<?php 
+			}else{
+				?>
+				<ul>
+					<li><a href="/order">Home</a></li>
+					<li><a href="/product/list">Products</a></li>
+					<li><a href="/user/list">Users</a></li>
+					<li><a href="/order/listorder">Manual Order</a></li>
+					<li><a href="/order/checks">Checks</a></li>
+					<li><a href="/index/logout/">Log Out</a></li>
+				</ul>
+				<?php
+			}
+			}
+			?>
+				</nav>
+				<!-- end of navigation -->
+				<!-- slider-holder -->
+				<div class="slider-holder">
+					<span class="left"></span>
+					<span class="right"></span>
+					<!-- flexslider -->
+					<div class="big-slider">
+						<ul class="slides">
+							<li>
+								<img src="<?php echo $this->baseUrl('css/images/slide-img.png');?>" alt="" class="alignleft"/>
+								<div class="slide-cnt">
+									<h2>Amazing Coffee <br />&amp; Delicious Cupcakes</h2>
+									<p>Vivamus ultrices tincidunt eros, sed sollicitudin est condimentum quis. Nulla a purus sit amet enim tincidunt varius vel a libero. Aenean neque dolor, tristique eu fermentum quis, imperdiet tincidunt ligula. Ut ut est erat, eget tempor odio vestibulum sed diam orci, vel mattis purus. Donec faucibus neque eu turpis imperdiet commodo. </p>
+									<a href="#" class="red-btn">Find Out More!</a>
+								</div>
+							</li>
+							<li>
+								<img src="<?php echo $this->baseUrl('css/images/slide-img2.png');?>" alt="" class="alignleft"/>
+								<div class="slide-cnt">
+									<h2>Amazing Coffee <br />&amp;  Delicious Cupcakes</h2>
+									<p>Vivamus ultrices tincidunt eros, sed sollicitudin est condimentum quis. Nulla a purus sit amet enim tincidunt varius vel a libero. Aenean neque dolor, tristique eu fermentum quis, imperdiet tincidunt ligula. Ut ut est erat, eget tempor odio vestibulum sed diam orci, vel mattis purus. Donec faucibus neque eu turpis imperdiet commodo. </p>
+									<a href="#" class="red-btn">Find Out More!</a>
+								</div>
+							</li>
+							<li>
+								<img src="<?php echo $this->baseUrl('css/images/slide-img3.png');?>" alt="" class="alignleft"/>
+								<div class="slide-cnt">
+									<h2>Amazing Coffee <br />&amp;  Delicious Cupcakes</h2>
+									<p>Vivamus ultrices tincidunt eros, sed sollicitudin est condimentum quis. Nulla a purus sit amet enim tincidunt varius vel a libero. Aenean neque dolor, tristique eu fermentum quis, imperdiet tincidunt ligula. Ut ut est erat, eget tempor odio vestibulum sed diam orci, vel mattis purus. Donec faucibus neque eu turpis imperdiet commodo. </p>
+									<a href="#" class="red-btn">Find Out More!</a>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<!-- end of flexslider -->
+				</div>
+				<!-- end of slider -->
+			</div>
+			<!-- end of shell -->
+		</div>
+		<!-- end of header -->
+<!-- main -->
+		<div class="main">
+			<div class="shell">
+				<!-- cols -->
+				<section class="cols">
+					<?php echo $this->layout()->content; ?>
+				</section>
+				<div class="cl">&nbsp;</div>
+			</div>
+		</div>
+		<!-- end of main -->
+		<div id="footer-push"></div>
+	</div>
+    <div id="footer">
+		<div class="shell">
+			<div class="footer-nav">
+				<?php
+				$authorization = Zend_Auth::getInstance();
+					if ($authorization->hasIdentity()) {
+						
+						$authStorage = $authorization->getStorage();
+						$user_type = $authStorage->read()->user_type;
+						
+				if($user_type == 0){
+				?>
+					<ul>
+						<li><a href="/order">Home</a></li>
+						<li><a href="/order/getorder">My Orders</a></li>
+						<li><a href="/index/logout/">Log Out</a></li>
+					</ul>
+				<?php 
+			}else{
+				?>
+				<ul>
+					<li><a href="/order">Home</a></li>
+					<li><a href="/product/list">Products</a></li>
+					<li><a href="/user/list">Users</a></li>
+					<li><a href="/order/listorder">Manual Order</a></li>
+					<li><a href="/order/checks">Checks</a></li>
+					<li><a href="/index/logout/">Log Out</a></li>
+				</ul>
+				<?php
+			}
+		}
+			?>
+			</div>
+			<p class="copy">© Copyright 2015<span>|</span>Café</a></p>
+		</div>
+	</div>
+	
+<script src="<?php echo $this->baseUrl().'/js/jquery-ui-1.11.4.custom/jquery-ui.js';?>"></script>
+</body>
+</html>

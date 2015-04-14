@@ -1,0 +1,178 @@
+<?php
+
+class ProductController extends Zend_Controller_Action {
+
+	public function init() {
+		$authorization = Zend_Auth::getInstance();
+		// var_dump(!$authorization->hasIdentity() && $this->_request->getActionName != 'home');
+		// die();
+		if (!$authorization->hasIdentity()) {
+			$this->redirect('index');
+		}
+	}
+
+	public function indexAction() {
+		// action body
+	}
+
+	public function addAction() {
+		// action body
+		$form = new Application_Form_Product();
+
+		$model   = new Application_Model_Category();
+		$cat_arr = $model->listCategories();
+
+		$catName = $form->getElement('cat_id');
+		$catName->addMultiOption('0', '-- Select Category --');
+		foreach ($cat_arr as $cats) {
+			$catName->addMultiOption($cats['cat_id'], $cats['cat_name']);
+		}
+		$this->view->form = $form;
+		if ($this->getRequest()->isPost()) {
+			if ($form->isValid($this->getRequest()->getParams())) {
+				$data = $form->getValues();
+				// echo "<pre>";
+				// var_dump($data);
+				// echo "</pre>";
+				// exit;
+				$data['pro_image'] = 'imgs/products/'.$data['pro_image'];
+				//                echo '<pre>';
+				//                print_r($data);
+				//                echo '</pre>';
+				//                if ($form->pro_image->isUploaded()) {
+				//                    $upload = new Zend_File_Transfer();
+				//                    $files = $upload->getFileInfo();
+				//                    $upload->addFilter('Rename', $files['pro_image']['name'],APPLICATION_PATH . '/imgs/products/' . rand(0, 1000) . '.jpg');
+				////                    echo '<pre>';
+				////                print_r($upload);
+				////                echo '</pre>';
+				//                    $upload->receive($files['pro_image']);
+				//                    $filename = $files['pro_image']['name'];
+				//                }
+				//                echo '<pre>';
+				//                print_r($filename);
+				//                echo '</pre>';
+				//                exit;
+				$model = new Application_Model_Product();
+				if ($model->addProduct($data)) {
+					$this->redirect("product/list");
+				}
+			}
+		}
+	}
+
+	public function editAction() {
+		$form = new Application_Form_Edit();
+		$pid  = $this->getRequest()->getParam("id");
+		if ($this->getRequest()->isGet()) {
+			//            echo 'isGet';
+			//            exit;
+			$model   = new Application_Model_Product();
+			$info    = $model->getProductById($pid);
+			$model   = new Application_Model_Category();
+			$cat_arr = $model->listCategories();
+
+			$catName = $form->getElement('cat_id');
+			foreach ($cat_arr as $cats) {
+				$catName->addMultiOption($cats['cat_id'], $cats['cat_name']);
+			}
+
+			$this->view->form = $form;
+			unset($info[0]['pro_image']);
+			$form->populate($info[0]);
+			$this->view->form = $form;
+
+		}
+		// echo $this->getRequest()->isPost();
+		if ($this->getRequest()->isPost()) {
+			// echo '<pre>';
+			// print_r($this->getRequest()->getParams());
+			// echo '</pre>';
+			//echo "valid: ".$form->isValid($this->getRequest()->getParams());
+
+			if ($form->isValid($this->getRequest()->getParams())) {
+				//echo '$form->isValid($this->getRequest()->getParams())';
+				$data              = $form->getValues();
+				$data['pro_image'] = $this->view->baseUrl().'/imgs/products/'.$data['pro_image'];
+				$upload            = new Zend_File_Transfer();
+				$upload->receive();
+				//var_dump($data);
+				// echo 'max file size : '.$data['MAX_FILE_SIZE'];
+
+				// exit;
+				$model = new Application_Model_Product();
+				if ($model->editProduct($data, $pid)) {
+
+					$this->redirect("product/list");
+				}
+			} else {
+				echo "<pre>";
+				print_r($form->getMessages());//error messages
+				print_r($form->getErrors());//error codes
+				print_r($form->getErrorMessages());//any custom error messages
+				echo "</pre>";
+			}
+		}
+	}
+
+	public function deleteAction() {
+		// action body
+		$id = $this->getRequest()->getParam("id");
+		if (isset($id)) {
+			$model = new Application_Model_Product();
+			if ($model->deleteProduct($id)) {
+				$this->redirect("product/list");
+			}
+
+		}
+	}
+
+	public function viewAction() {
+		// action body
+		$pid = $this->getRequest()->getParam("id");
+		if ($this->getRequest()->isGet()) {
+			//            echo 'isGet';
+			//            exit;
+			$model                   = new Application_Model_Product();
+			$info                    = $model->getProductById($pid);
+			$this->view->productInfo = $info;
+		}
+
+	}
+
+	public function listAction() {
+		// action body
+		$model     = new Application_Model_Product();
+		$paginator = $model->listProducts();
+
+		$page = $this->_getParam('page', 1);
+		$paginator->setItemCountPerPage(2);
+		$paginator->setCurrentPageNumber($page);
+
+		$this->view->paginator = $paginator;
+	}
+
+	public function changeAction() {
+		// action body
+		$pid    = $this->getRequest()->getParam("id");
+		$status = $this->getRequest()->getParam("s");
+		if ($this->getRequest()->isGet()) {
+			//$data;
+			$model = new Application_Model_Product();
+
+			//if ($status == '0') {
+			$data = array('pro_status' => $status);
+
+			// } else {
+			// 	$data = array('pro_status' => '0');
+
+			// }
+			if ($model->editProduct($data, $pid)) {
+				$this->redirect("product/list");
+
+			}
+		}
+		$this->redirect("product/list");
+	}
+
+}

@@ -1,0 +1,37 @@
+ <h3 class="list">All Users</h3>
+ <a href="<?php echo $this->baseUrl().'/user/add/'?>" class="add">Add User</a>
+<?php
+
+if (count($this->paginator)){
+?>
+        <table id="productlist">
+            <tr>
+                <th>Name</th>
+                <th>Room No.</th>
+                <th>Room Ext.</th>
+                <th>User Image</th>
+                <th>Options</th>      
+            </tr>
+            <?php
+            
+            foreach ($this->paginator as $item){
+            ?>
+            <tr>
+            <?php
+            echo "<td>".$item['user_name']."</td>";
+            echo "<td>".$item['room_no']."</td>";
+            echo "<td>".$item['room_ext']."</td>";
+            echo "<td><img width='50' height='50' src='".$this->baseUrl("pic/".$item['user_image'])."' /></td>";
+            
+            echo "<td> <a href = '".$this->baseUrl()."/user/delete/user_id/".$item['user_id']."'> Delete </a>|"
+            . "<a href = '".$this->baseUrl()."/user/edit/user_id/".$item['user_id']."'> Edit </a> </td>" ;
+            }
+            echo '</tr>';
+        }
+            ?>
+        </table>
+
+<?php 
+echo $this->paginationControl($this->paginator,
+                                    'Sliding',
+                                    'pages.phtml'); ?>

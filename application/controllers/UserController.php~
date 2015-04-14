@@ -1,0 +1,155 @@
+<?php
+
+class UserController extends Zend_Controller_Action
+{
+
+    public function init()
+    {
+        /* Initialize action controller here */
+    }
+
+    public function indexAction()
+    {
+        // action body
+    }
+
+    public function addAction()
+    {
+        // action body
+        $form = new Application_Form_signup();
+        $this->view->form = $form;
+        if($this->getRequest()->isPost())
+        {
+            if($form->isValid($this->getRequest()->getParams()))
+            {
+                if($form->getElement('user_pass')->getValue() != $form->getElement('confirm_password')->getValue())
+                {
+                    echo "password notmatced";
+                   // $this->redirect('user/add');
+                }
+                else
+                 {
+                    $user_model = new Application_Model_User();
+                  
+                    $form->removeElement('confirm_password');
+                    $user_info=$form->getValues();
+                    $imagename = end(explode('.', $form->getElement('user_image')->getValue()));
+                    $img = rand(0,500).'_'.$imagename;
+                    $path = '/var/www/ecommerce/public/pic/'.$img;
+                    //move_uploaded_file($imagename, $path);
+                    $user_info['user_image']= $img;
+                    $form->getElement('user_image')->addFilter('Rename', array('target'=>$path,'overwrite'=>true));
+                    $form->getElement('user_image')->receive();
+                    if($user_model->addUser($user_info))
+                    {$this->redirect("user/list");}
+                    else
+                     echo "can`t add user";
+                
+                 }
+            }
+        }
+    }
+
+    public function listAction()
+    {
+        // action body
+        $user_model = new Application_Model_User();
+        $this->view->users = $user_model->listUsers();
+    }
+    
+     public function editAction()
+    {
+         $id = $this->getRequest()->getParam('user_id');
+         $user_model = new Application_Model_User();
+         $form = new Application_Form_signup();
+         if(isset($id))
+         {
+          
+              $form->getElement('user_pass')->removeValidator('Zend_Validate_StringLength')->setRequired(false);
+              $form->getElement('confirm_password')->removeValidator('Zend_Validate_StringLength')->setRequired(false);
+              $form->getElement('user_image')->setRequired(false);
+              //$form->removeElement('confirm_password');
+          
+              $user_info = $user_model->getUserById($id);
+              //var_dump($user_info);
+              //die();
+              if(!empty($user_info))
+              {
+                $form->removeElement('confirm_password'); 
+                $form->populate($user_info[0]);
+                $this->view->form = $form;
+                $this->render('add'); 
+              }
+         }
+         if($this->getRequest()->isPost())
+         {
+           
+            if($form->isValid($this->getRequest()->getParams()))
+            {
+                $usernewdata=$form->getValues();
+                //var_dump($usernewdata);
+                //die();
+                if(empty($usernewdata['user_image']))
+                {
+                   unset($usernewdata['user_image']);
+                   if($user_model->editUser($usernewdata))
+                   {$this->redirect('user/list');}
+                }
+                else
+                {
+                    $imagename = end(explode('.', $form->getElement('user_image')->getValue()));
+                    $img = rand(0,500).'_'.$imagename;
+                    $path = '/var/www/html/omgamal/public/pic/'.$img;
+                    $usernewdata['user_image']= $img;
+                    $form->getElement('user_image')->addFilter('Rename', array('target'=>$path,'overwrite'=>true));
+                    $form->getElement('user_image')->receive();
+                    if($user_model->editUser($usernewdata))
+                   {$this->redirect('user/list');}
+                }
+                /*if($user_model->editUser($user_info))
+                {$this->redirect('user/list');}
+                else
+                {
+                    echo "can`t edit user";
+                }*/
+            }
+             
+         }
+         
+         
+    }
+    
+     public function deleteAction()
+    {
+        
+        $id = $this->getRequest()->getParam("user_id");
+        if(isset($id))
+        {
+          $user_model = new Application_Model_User();
+          //$this->view->users = $user_model->deleteUser($id);
+          if($user_model->deleteUser($id))
+          {
+            $this->redirect("user/list");  
+          }
+          else
+          {
+              echo "can`t delete user";
+          }
+        }
+        
+    }
+    
+    public function forgetpasswordAction()
+    {
+        
+    }
+    
+        
+
+
+}
+
+
+
+
+

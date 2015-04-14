@@ -1,0 +1,127 @@
+<div class="col">
+<?php
+
+$prices = 0;
+
+$authorization = Zend_Auth::getInstance();
+$authStorage = $authorization->getStorage();
+$user_type = $authStorage->read()->user_type;
+if($user_type == 0){
+    echo '<h3>Latest Order </h3><ul id="productslist">';
+    foreach ($this->order_data as $prod) {
+        $first_order = $this->order_data[0]['order_id'];
+        
+        if($prod['order_id'] == $first_order){
+        ?>
+        <li>
+            <label id="product_name"><?php echo $prod['pro_name'];?></label><br/>
+            <img src="<?php echo $this->baseUrl($prod['pro_image']);?>"/><br/>
+            Ordered quantity: <label id="product_amount"><?php echo $prod['pro_amount'];?></label>
+        </li>
+        <?php
+        }else
+            break;
+    }
+    echo "</ul><hr/>";
+}else{
+    $user_data          = new Zend_Session_Namespace('user');
+    echo '<h3>Add To User </h3><select id="users">'.
+        '<option value="0">-- Select User --</option>';
+       
+
+if(isset($user_data->data) && count($user_data->data) != 0){
+    foreach ($this->allusers as $user) {
+            if($user_data->data == $user['user_id']){
+        ?>
+        <option value="<?php echo $user_data->data;?>" selected><?php echo $user['user_name'];?></option>
+        <?php 
+            }else{
+                ?>
+                <option value="<?php echo $user['user_id'];?>"><?php echo $user['user_name'];?></option>
+        <?php
+            }
+        }
+}else{
+       foreach ($this->allusers as $user) {
+    ?>
+    <option value="<?php echo $user['user_id'];?>"><?php echo $user['user_name'];?></option>
+    <?php  
+    }
+}
+    echo "</select><hr/>";
+}
+if (count($this->paginator)){
+    ?>
+    <h3>Products </h3>
+    <ul id="productslist"> 
+    <?php
+   
+    $base = $this->baseUrl();
+    $products = $this->products;
+        
+    foreach ($this->paginator as $item){
+          ?>
+        <li id="<?php echo $item['pro_id'];?>" class="<?php var_dump($item);?>">
+            <label id="product_name"><?php echo $item['pro_name'];?></label><br/>
+            <img src="<?php echo $this->baseUrl($item['pro_image']);?>" class="product_image" id="<?php echo $item['pro_id'];?>" price="<?php echo $item['pro_price'];?>" name="<?php echo $item['pro_name'];?>"/><br/>
+            <label id="product_price"><?php echo $item['pro_price'];?></label> L.E.
+            <?php
+            if($user_type == 1){
+                if($item['pro_status']==0){
+                    ?>
+                    | not available<br/>
+                    <?php
+                    
+                }else{
+                    ?>
+                    | available<br/>
+                    <?php
+                    
+                }
+            
+            $pid = $item['pro_id'];
+       
+          echo '<a href="'.$base.'/product/edit/id/'.$pid.'">Edit</a> | ';
+          echo '<a href="'.$base.'/product/delete/id/'.$pid.'">Delete</a>';
+       
+            }
+            ?>
+            <br/>
+        </li>
+          <?php
+            
+        }
+    ?>
+    </ul>         
+    <?php
+} // end of if that check for paginator
+echo $this->paginationControl($this->paginator,'Sliding','pages.phtml'); 
+?>
+</div>
+<div class="col2">
+    
+    <table id="choosed_products">
+        <?php
+        $products          = new Zend_Session_Namespace('products');
+       
+        if(isset($products->items) && count($products->items) != 0){//
+            foreach ($products->items as $item) {
+                
+                $prices += $item['prod_price'];
+            ?>
+<tr id="<?php echo $item['prod_id'];?>">
+    <td><label id="choosed_product_name"><?php echo $item['prod_name'];?></label></td>
+    <td><input type="number" name="quantity" id="<?php echo 'quantity_'.$item['prod_id'];?>" value="<?php echo $item['prod_quantity'];?>" /></td>
+    <td><input type="button" class="plus" id="<?php echo $item['prod_id'] ?>" value="+"><input type="button" class="minus" id="<?php echo $item['prod_id'] ?>" value="-"></td>
+    <td><label id="<?php echo 'price_'.$item['prod_id'];?>"><?php echo $item['prod_price'];?></label></td>
+    <td> L.E. <input type="button" class="close" id="<?php echo $item['prod_id'] ?>" value="x"></td>
+</tr>
+
+<?php
+            }
+        }
+?>
+        </table>
+        <?php echo $this->addform; ?>
+        <label id="total_price"><?php echo $prices;?></label><label id="currency"> L.E.</label><br/>
+</div>

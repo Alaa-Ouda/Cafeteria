@@ -1,0 +1,54 @@
+ <h3 class="list" id="listprod">All Products</h3>
+ <a href="<?php echo $this->baseUrl().'/product/add/'?>" class="add">Add Product</a>
+<?php
+if (count($this->paginator)){
+    ?>
+    <table id="productlist"> 
+    <tr>
+        <th>Name</th>
+        <th>Thumbnail</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Options</th>
+    </tr>
+    <?php
+    $base = $this->baseUrl();
+    $products = $this->products;
+       
+    foreach ($this->paginator as $item){
+          ?>
+        <tr>
+            <td><a href="/product/view/id/<?php echo $item['pro_id'];?>"><?php echo $item['pro_name'];?></a></td>
+            <td><a href="/product/view/id/<?php echo $item['pro_id'];?>"><img src="<?php echo $this->baseUrl($item['pro_image']);?>" /></a></td>
+            <td><?php echo $item['pro_price'];?> L.E</td>
+            <?php
+                if($item['pro_status']==0){
+                    ?>
+                     <td>unavailable</td>
+                    <?php
+                    
+                }else{
+                    ?>
+                     <td>available</td>
+                    <?php
+                    
+                }
+            
+            $pid = $item['pro_id'];
+          echo '<td>';
+          echo '<a href="'.$base.'/product/edit/id/'.$pid.'">Edit</a>|';
+          echo '<a href="'.$base.'/product/delete/id/'.$pid.'">Delete</a>|';
+          if($item['pro_status']==0){
+          echo '<a href="'.$base.'/product/change/id/'.$pid.'/s/1">Available</a>';
+          }else{
+          echo '<a href="'.$base.'/product/change/id/'.$pid.'/s/0">Unavailable</a>';
+          }
+          echo '</td>';
+            echo '</tr>';
+        }
+    ?>
+    </table>
+
+<?php } echo $this->paginationControl($this->paginator,
+                                    'Sliding',
+                                    'pages.phtml'); ?>
